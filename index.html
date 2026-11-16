@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appointment Reminder Composer — Trilingual no-show reminder kit for service businesses</title>
+<meta name="description" content="We built a local-first, trilingual appointment reminder composer for service businesses: confirmation, 24-hour, morning-of and on-the-way reminders, post-no-show follow-ups, calendar files and per-client history. No account, no subscription, your data stays in your browser.">
+<style>
+:root{--ink:#14213d;--blue:#2563eb;--teal:#0e9594;--bg:#f6f7fb;--card:#fff;--line:#e2e6ef;--muted:#667085;--red:#c0392b;--amber:#b7791f;--green:#1a7f4b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--ink);color:#fff;padding:28px 20px}header .wrap,main{max-width:1060px;margin:0 auto}
+h1{margin:0 0 6px;font-size:30px;letter-spacing:-.02em}header p{margin:0;opacity:.85;max-width:720px;line-height:1.5}
+.langbar{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.langbar button,.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 14px;border-radius:999px;cursor:pointer;font-weight:600}
+.langbar button.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+main{padding:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:18px}.card h3{margin:16px 0 8px;font-size:15px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px;color:#344054}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:84px} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.teal{background:var(--teal);color:#fff;border-color:var(--teal)}.btn.small{padding:6px 10px;font-size:13px}.btn.danger{color:var(--red)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}}.stat{background:#eef4ff;border-radius:12px;padding:14px}.stat b{font-size:22px;display:block}.stat span{font-size:13px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2f7}.badge.noshow{background:#fdecec;color:var(--red)}.badge.attended{background:#e6f4ea;color:var(--green)}.badge.booked{background:#fff4d6;color:var(--amber)}.badge.cancelled{background:#eef2f7;color:var(--muted)}
+.doc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;white-space:pre-wrap;line-height:1.55;font-size:14px;min-height:220px}
+.small{font-size:13px;color:var(--muted);line-height:1.5}.heroimg{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff}
+footer{max-width:1060px;margin:0 auto;padding:10px 20px 34px;color:var(--muted);font-size:13px;line-height:1.6}
+@media print{header,.no-print{display:none!important}main{padding:0}.card{border:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1 id="t-title">Appointment Reminder Composer</h1>
+<p id="t-sub">We help appointment-based businesses keep the slots they book: a confirmation at booking, a reminder 24 hours before, one on the morning of, and one on the way — plus a kind follow-up when someone still does not show. In English, French, or Spanish. Local-first: no account, and your data stays in your browser.</p>
+<div class="langbar" role="group" aria-label="Language">
+<button data-lang="en" class="active">English</button><button data-lang="fr">Français</button><button data-lang="es">Español</button>
+</div></div></header>
+<main>
+<img class="heroimg" src="assets/workflow.svg" alt="Workflow: book, confirm, remind, show up">
+<section class="card"><h2 id="t-dash">At a glance</h2><div class="stats">
+<div class="stat"><b id="st-up">0</b><span id="t-up">Upcoming</span></div>
+<div class="stat"><b id="st-today">0</b><span id="t-today">Today</span></div>
+<div class="stat"><b id="st-att">0</b><span id="t-att">Attended</span></div>
+<div class="stat"><b id="st-ns">0</b><span id="t-ns">No-shows</span></div></div>
+<p class="small" id="t-rate">No-show rate: —</p>
+<p class="small" id="t-local">Everything is stored only on this device (browser local storage). Export a backup regularly.</p>
+<div class="actions no-print"><button class="btn small" id="btn-export">Export backup (JSON)</button><label class="btn small" style="cursor:pointer">Import backup<input type="file" id="file-import" accept=".json" hidden></label></div>
+</section>
+
+<section class="card"><h2 id="t-clients">By client</h2><div id="client-history"><p class="small">No appointments yet.</p></div>
+<p class="small" id="t-clients-sub">Every client in one place: how many appointments they have booked, how many they attended, how many they missed, and their last outcome — so a repeat no-show is a pattern we can see, not a surprise we keep paying for.</p></section>
+
+<div class="grid">
+<section class="card"><h2 id="t-biz">Your business</h2>
+<label>Business name</label><input id="biz-name" placeholder="Studio Example">
+<label>Location / address</label><input id="biz-place" placeholder="12 Example Street, or the video-call link clients join">
+<label>Contact (phone or email clients reply to)</label><input id="biz-contact" placeholder="+1 555 0100">
+<label>Cancellation policy (your policy)</label><textarea id="biz-policy" placeholder="e.g. Please tell us at least 24 hours ahead if you cannot come, so the slot can go to someone else — write your own policy"></textarea>
+</section>
+<section class="card"><h2 id="t-client">Client</h2>
+<label>Saved clients</label><select id="client-saved"><option value="">—</option></select>
+<label>Client name</label><input id="client-name" placeholder="Client Example">
+<label>Client email</label><input id="client-email" type="email" placeholder="client@example.com">
+<label>Client phone (for WhatsApp)</label><input id="client-phone" placeholder="+1 555 0101">
+<label>Client language</label><select id="client-lang"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option></select>
+<div class="actions"><button class="btn small teal" id="btn-save-client">Save client</button></div>
+<label>Saved services</label><select id="service-saved"><option value="">—</option></select>
+</section>
+</div>
+
+<section class="card"><h2 id="t-appt">New appointment</h2>
+<div class="row"><div><label>Service</label><input id="appt-service" placeholder="e.g. Consultation, Haircut, Treatment"></div>
+<div><label>Duration (minutes)</label><input id="appt-dur" type="number" min="5" step="5" value="60"></div></div>
+<div class="actions"><button class="btn small" id="btn-save-service">Save service</button></div>
+<div class="row3"><div><label>Date</label><input id="appt-date" type="date"></div>
+<div><label>Time</label><input id="appt-time" type="time" value="10:00"></div>
+<div><label>Appointment language</label><select id="appt-lang"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option></select></div></div>
+<label>Place (address, room, or video-call link — overrides the business location when filled)</label><input id="appt-place" placeholder="">
+<div class="actions no-print"><button class="btn primary" id="btn-save-appt">Save appointment</button></div>
+</section>
+
+<section class="card"><h2 id="t-appts">Appointments</h2><div id="appt-list"><p class="small">No appointments yet.</p></div></section>
+
+<section class="card"><h2 id="t-compose">Reminder composer</h2>
+<p class="small" id="t-compose-sub">Pick a saved appointment, choose a step, and copy a ready-to-send message in the appointment language. The sequence that works: a confirmation the moment the appointment is booked, a reminder 24 hours before, a short one on the morning of the appointment, and one on the way. When someone still does not show, send the first follow-up soon — while the slot is still fresh — and a second one two days later offering a new time. Every message we compose is logged on the appointment, so we always know what was sent and when. The appointments list suggests the next step for every booking — worked out from its time, the messages already logged, and its recorded outcome — and picking an appointment here pre-selects that step, so what to send next is decided before the moment arrives. The outcome buttons on each appointment (attended, no-show, cancelled) are part of the record too: they drive the no-show rate above, the per-client history, and which follow-up the composer suggests next. When a cancellation policy is saved for the business, it travels with the confirmation and the 24-hour reminder, under a label in the appointment language — stated in the message itself, not remembered from an earlier conversation. When the message reads right, send it straight from here by email or WhatsApp, download a calendar file (.ics) the client can add in one tap, or copy the message into any other channel.</p>
+<div class="row"><div><label>Appointment</label><select id="cmp-appt"></select></div>
+<div><label>Step</label><select id="cmp-step"><option value="confirm">Confirmation (at booking)</option><option value="h24">24 hours before</option><option value="morning">Morning of</option><option value="ontheway">On the way</option><option value="postsoon">After a no-show — soon</option><option value="post48">After a no-show — 2 days later</option></select></div></div>
+<div class="actions"><button class="btn teal" id="btn-compose">Compose message</button><button class="btn" id="btn-copy">Copy</button><button class="btn" id="btn-mail">Send by email</button><button class="btn" id="btn-wa">Send via WhatsApp</button><button class="btn" id="btn-ics">Calendar file (.ics)</button></div>
+<h3 id="t-preview">Preview</h3><div class="doc" id="preview">—</div>
+</section>
+</main>
+<footer><p id="t-foot">We built this composer so small appointment-based teams can spend less time filling empty slots and more time doing the work. Your clients, services, appointments, and message history accumulate here on your device — that history is what turns a missed appointment from a surprise into a pattern we can act on.</p></footer>
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('arc-'+k))??d}catch(e){return d}},set(k,v){localStorage.setItem('arc-'+k,JSON.stringify(v))}};
+let lang='en';
+const UI={en:{title:'Appointment Reminder Composer',dash:'At a glance',up:'Upcoming',today:'Today',att:'Attended',ns:'No-shows',biz:'Your business',client:'Client',appt:'New appointment',appts:'Appointments',compose:'Reminder composer',preview:'Preview',clients:'By client'},
+fr:{title:'Rappels de rendez-vous',dash:'En un coup d\u2019œil',up:'À venir',today:'Aujourd\u2019hui',att:'Présents',ns:'Absences',biz:'Votre entreprise',client:'Client',appt:'Nouveau rendez-vous',appts:'Rendez-vous',compose:'Composer un rappel',preview:'Aperçu',clients:'Par client'},
+es:{title:'Recordatorios de citas',dash:'De un vistazo',up:'Próximas',today:'Hoy',att:'Asistidas',ns:'Inasistencias',biz:'Su negocio',client:'Cliente',appt:'Nueva cita',appts:'Citas',compose:'Redactar un recordatorio',preview:'Vista previa',clients:'Por cliente'}};
+const STEPS=['confirm','h24','morning','ontheway','postsoon','post48'];
+const STEPNAME={en:{confirm:'Confirmation',h24:'24-hour reminder',morning:'Morning-of reminder',ontheway:'On-the-way message',postsoon:'Post-no-show follow-up (soon)',post48:'Post-no-show follow-up (2 days later)'},
+fr:{confirm:'Confirmation',h24:'Rappel 24 h avant',morning:'Rappel du matin',ontheway:'Message en route',postsoon:'Relance après absence (peu après)',post48:'Relance après absence (2 jours plus tard)'},
+es:{confirm:'Confirmación',h24:'Recordatorio 24 horas antes',morning:'Recordatorio de la mañana',ontheway:'Mensaje en camino',postsoon:'Seguimiento tras inasistencia (pronto)',post48:'Seguimiento tras inasistencia (2 días después)'}};
+function fmtDate(ds,lg){if(!ds)return'—';const d=new Date(ds+'T12:00:00');return new Intl.DateTimeFormat(lg==='fr'?'fr':lg==='es'?'es':'en',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d)}
+function fmtTime(ts){return ts||''}
+function apptDT(a){return new Date((a.date||'')+'T'+(a.time||'00:00')+':00')}
+function hasLog(a,step){return (a.log||[]).some(x=>x.step===step)}
+function withPolicy(text,a,step){if(step!=='confirm'&&step!=='h24')return text;const pol=((a.policy||'').trim()||(store.get('biz-policy','')||'').trim());if(!pol)return text;const label={en:'Cancellation policy',fr:'Politique d\u2019annulation',es:'Política de cancelación'}[a.lang||'en'];return text+'\n\n'+label+': '+pol}
+const MSG={
+en:{confirm:a=>`Subject: Confirmed — ${a.service} on ${fmtDate(a.date,'en')} at ${fmtTime(a.time)}\n\nHello ${a.client},\n\nYour appointment is booked: ${a.service} with ${a.biz} on ${fmtDate(a.date,'en')} at ${fmtTime(a.time)}${a.place?`, at ${a.place}`:''}. We have saved the slot for you.\n\nIf that time stops working, please tell us as early as you can — reply to this message and we will find another time together. Thank you, and we look forward to seeing you.`,
+h24:a=>`Subject: Tomorrow — ${a.service} at ${fmtTime(a.time)}\n\nHello ${a.client},\n\nA reminder that your appointment is tomorrow, ${fmtDate(a.date,'en')} at ${fmtTime(a.time)}: ${a.service} with ${a.biz}${a.place?`, at ${a.place}`:''}.\n\nPlease reply to confirm you are still coming. If you cannot make it, telling us today lets us offer the slot to someone else and find you a new time. Thank you very much.`,
+morning:a=>`Subject: Today — ${a.service} at ${fmtTime(a.time)}\n\nHello ${a.client},\n\nToday is the day: ${a.service} with ${a.biz} at ${fmtTime(a.time)}${a.place?`, at ${a.place}`:''}. We are getting everything ready for you.\n\nIf something has come up, please tell us now rather than not coming — a short message is all it takes. See you soon.`,
+ontheway:a=>`Hello ${a.client}, a short note before your appointment: ${a.service} with ${a.biz} at ${fmtTime(a.time)}${a.place?`, at ${a.place}`:''}. If you are running late, reply here and we will do our best to hold your slot. Safe travels — see you shortly.`,
+postsoon:a=>`Subject: We missed you today — ${a.service}\n\nHello ${a.client},\n\nWe had your slot saved today at ${fmtTime(a.time)} for ${a.service} and we missed you. We hope everything is all right.\n\nThese things happen — reply to this message and we will find a new time together. Your slot today could not be offered to anyone else, so a quick word next time helps us a lot. Thank you for understanding.`,
+post48:a=>`Subject: A new time for your ${a.service}?\n\nHello ${a.client},\n\nWe are following up on your missed appointment on ${fmtDate(a.date,'en')}. We would still be glad to see you — reply here and we will offer you the next open times for ${a.service}.\n\nIf you no longer need the appointment, a short note closes it cleanly on both sides. Thank you very much.`},
+fr:{confirm:a=>`Objet : Confirmé — ${a.service} le ${fmtDate(a.date,'fr')} à ${fmtTime(a.time)}\n\nBonjour ${a.client},\n\nVotre rendez-vous est bien réservé : ${a.service} chez ${a.biz} le ${fmtDate(a.date,'fr')} à ${fmtTime(a.time)}${a.place?`, à ${a.place}`:''}. Nous avons gardé ce créneau pour vous.\n\nSi cet horaire ne vous convient plus, dites-le-nous le plus tôt possible — répondez à ce message et nous trouverons ensemble un autre horaire. Merci, et au plaisir de vous voir.`,
+h24:a=>`Objet : Demain — ${a.service} à ${fmtTime(a.time)}\n\nBonjour ${a.client},\n\nPetit rappel : votre rendez-vous est demain, le ${fmtDate(a.date,'fr')} à ${fmtTime(a.time)} : ${a.service} chez ${a.biz}${a.place?`, à ${a.place}`:''}.\n\nMerci de répondre pour confirmer que vous serez bien là. Si vous ne pouvez pas venir, nous le dire aujourd'hui nous permet de proposer le créneau à quelqu'un d'autre et de vous trouver un nouvel horaire. Merci beaucoup.`,
+morning:a=>`Objet : Aujourd'hui — ${a.service} à ${fmtTime(a.time)}\n\nBonjour ${a.client},\n\nC'est aujourd'hui : ${a.service} chez ${a.biz} à ${fmtTime(a.time)}${a.place?`, à ${a.place}`:''}. Nous préparons tout pour vous.\n\nSi un imprévu est arrivé, dites-le-nous maintenant plutôt que de ne pas venir — un court message suffit. À très vite.`,
+ontheway:a=>`Bonjour ${a.client}, un court message avant votre rendez-vous : ${a.service} chez ${a.biz} à ${fmtTime(a.time)}${a.place?`, à ${a.place}`:''}. Si vous avez du retard, répondez ici et nous ferons de notre mieux pour garder votre créneau. Bonne route — à tout de suite.`,
+postsoon:a=>`Objet : Vous nous avez manqué aujourd'hui — ${a.service}\n\nBonjour ${a.client},\n\nNous avions gardé votre créneau aujourd'hui à ${fmtTime(a.time)} pour ${a.service} et vous nous avez manqué. Nous espérons que tout va bien.\n\nCela arrive — répondez à ce message et nous trouverons ensemble un nouvel horaire. Votre créneau d'aujourd'hui n'a pu être proposé à personne d'autre, alors un petit mot la prochaine fois nous aide beaucoup. Merci de votre compréhension.`,
+post48:a=>`Objet : Un nouvel horaire pour votre ${a.service} ?\n\nBonjour ${a.client},\n\nNous revenons vers vous au sujet de votre rendez-vous manqué du ${fmtDate(a.date,'fr')}. Nous serions toujours heureux de vous voir — répondez ici et nous vous proposerons les prochains horaires libres pour ${a.service}.\n\nSi vous n'avez plus besoin du rendez-vous, un court message le clôt proprement des deux côtés. Merci beaucoup.`},
+es:{confirm:a=>`Asunto: Confirmada — ${a.service} el ${fmtDate(a.date,'es')} a las ${fmtTime(a.time)}\n\nHola ${a.client}:\n\nSu cita está reservada: ${a.service} con ${a.biz} el ${fmtDate(a.date,'es')} a las ${fmtTime(a.time)}${a.place?`, en ${a.place}`:''}. Hemos guardado ese horario para usted.\n\nSi ese horario deja de servirle, avísenos lo antes posible — responda a este mensaje y encontraremos otro horario juntos. Muchas gracias, y esperamos verle pronto.`,
+h24:a=>`Asunto: Mañana — ${a.service} a las ${fmtTime(a.time)}\n\nHola ${a.client}:\n\nLe recordamos que su cita es mañana, el ${fmtDate(a.date,'es')} a las ${fmtTime(a.time)}: ${a.service} con ${a.biz}${a.place?`, en ${a.place}`:''}.\n\nPor favor responda para confirmar que sigue en pie. Si no puede venir, avisarnos hoy nos permite ofrecer el horario a otra persona y buscarle uno nuevo. Muchas gracias.`,
+morning:a=>`Asunto: Hoy — ${a.service} a las ${fmtTime(a.time)}\n\nHola ${a.client}:\n\nHoy es el día: ${a.service} con ${a.biz} a las ${fmtTime(a.time)}${a.place?`, en ${a.place}`:''}. Estamos preparando todo para usted.\n\nSi ha surgido algún imprevisto, avísenos ahora en lugar de no venir — basta un mensaje corto. Hasta pronto.`,
+ontheway:a=>`Hola ${a.client}, un mensaje breve antes de su cita: ${a.service} con ${a.biz} a las ${fmtTime(a.time)}${a.place?`, en ${a.place}`:''}. Si viene con retraso, responda aquí y haremos lo posible por guardar su horario. Buen viaje — hasta ahora.`,
+postsoon:a=>`Asunto: Le echamos de menos hoy — ${a.service}\n\nHola ${a.client}:\n\nTeníamos su horario guardado hoy a las ${fmtTime(a.time)} para ${a.service} y le echamos de menos. Esperamos que todo esté bien.\n\nEstas cosas pasan — responda a este mensaje y encontraremos un nuevo horario juntos. Su horario de hoy no pudo ofrecerse a nadie más, así que un aviso la próxima vez nos ayuda mucho. Gracias por su comprensión.`,
+post48:a=>`Asunto: ¿Un nuevo horario para su ${a.service}?\n\nHola ${a.client}:\n\nLe escribimos por su cita perdida del ${fmtDate(a.date,'es')}. Nos seguiría gustando verle — responda aquí y le ofreceremos los próximos horarios libres para ${a.service}.\n\nSi ya no necesita la cita, un mensaje breve la cierra limpiamente por ambas partes. Muchas gracias.`}};
+function enriched(a){return {...a,biz:store.get('biz-name','')||'—',place:(a.place||'').trim()||(store.get('biz-place','')||'').trim(),policy:(store.get('biz-policy','')||'')}}
+function composeText(a,step){return withPolicy(MSG[a.lang||'en'][step](enriched(a)),a,step)}
+function nextStep(a,now){now=now||new Date();
+ if(a.status==='attended')return{key:'done',text:'Attended — recorded'};
+ if(a.status==='cancelled')return{key:'done',text:'Cancelled — recorded'};
+ if(a.status==='noshow'){if(!hasLog(a,'postsoon'))return{key:'postsoon',text:'Post-no-show follow-up — send soon'};if(!hasLog(a,'post48'))return{key:'post48',text:'Post-no-show follow-up — 2 days later'};return{key:'done',text:'Follow-ups sent — offer a new time or close'}};
+ const mins=(apptDT(a)-now)/60000;
+ if(mins<-30)return{key:'outcome',text:'Appointment passed — record the outcome'};
+ if(!hasLog(a,'confirm'))return{key:'confirm',text:'Confirmation'};
+ if(mins>1440)return{key:'wait',text:'Confirmed — 24-hour reminder next'};
+ if(mins>180){if(!hasLog(a,'h24'))return{key:'h24',text:'24-hour reminder'};return{key:'wait',text:'24-hour reminder sent — morning-of next'}};
+ if(mins>30){if(!hasLog(a,'morning'))return{key:'morning',text:'Morning-of reminder'};if(mins<=120&&!hasLog(a,'ontheway'))return{key:'ontheway',text:'On-the-way message'};return{key:'wait',text:'Morning-of sent — on-the-way next'}};
+ if(mins>=-30){if(!hasLog(a,'ontheway'))return{key:'ontheway',text:'On-the-way message'};return{key:'wait',text:'On-the-way sent'}};
+ return{key:'outcome',text:'Appointment passed — record the outcome'}}
+function buildICS(a){const dt=(a.date||'').replace(/-/g,'');const tm=(a.time||'10:00').replace(':','')+'00';const start=dt+'T'+tm;const endD=new Date(apptDT(a).getTime()+(+a.dur||60)*60000);const p=n=>String(n).padStart(2,'0');const end=String(endD.getFullYear())+p(endD.getMonth()+1)+p(endD.getDate())+'T'+p(endD.getHours())+p(endD.getMinutes())+'00';const e=enriched(a);const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+ return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Appointment Reminder Composer//EN','BEGIN:VEVENT','UID:'+(a.id||'appt')+'@appointment-reminder-composer','DTSTAMP:'+start,'DTSTART:'+start,'DTEND:'+end,'SUMMARY:'+esc(e.service+' — '+e.biz),'LOCATION:'+esc(e.place),'DESCRIPTION:'+esc('Appointment with '+e.biz+'. Service: '+e.service+'.'),'BEGIN:VALARM','TRIGGER:-PT24H','ACTION:DISPLAY','DESCRIPTION:Reminder','END:VALARM','BEGIN:VALARM','TRIGGER:-PT2H','ACTION:DISPLAY','DESCRIPTION:Reminder','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')}
+</script>
+<script>
+function clients(){return store.get('clients',[])} function services(){return store.get('services',[])} function appts(){return store.get('appts',[])}
+function saveAppts(x){store.set('appts',x);render()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function render(){
+ const cs=clients(),sv=services(),as=appts();
+ $('client-saved').innerHTML='<option value="">—</option>'+cs.map((c,i)=>`<option value="${i}">${escH(c.name)}</option>`).join('');
+ $('service-saved').innerHTML='<option value="">—</option>'+sv.map((s,i)=>`<option value="${i}">${escH(s.name)} (${s.dur} min)</option>`).join('');
+ const today=new Date();const tds=today.toISOString().slice(0,10);
+ const upcoming=as.filter(a=>a.status==='booked'&&apptDT(a)>=new Date(today.toDateString())).length;
+ $('st-up').textContent=upcoming;
+ $('st-today').textContent=as.filter(a=>a.date===tds&&a.status==='booked').length;
+ const att=as.filter(a=>a.status==='attended').length,ns=as.filter(a=>a.status==='noshow').length;
+ $('st-att').textContent=att;$('st-ns').textContent=ns;
+ $('t-rate').textContent='No-show rate: '+((att+ns)>0?Math.round(ns/(att+ns)*100)+'% ('+ns+' of '+(att+ns)+' completed appointments)':'—');
+ // by client
+ const by={};as.forEach(a=>{const k=a.client||'—';by[k]=by[k]||{n:0,att:0,ns:0,last:''};by[k].n++;if(a.status==='attended')by[k].att++;if(a.status==='noshow')by[k].ns++;if(String(a.date||'')>String(by[k].last||''))by[k].last=a.date});
+ const rows=Object.entries(by).sort((x,y)=>y[1].ns-x[1].ns||y[1].n-x[1].n);
+ $('client-history').innerHTML=rows.length?('<table><tr><th>Client</th><th>Booked</th><th>Attended</th><th>No-shows</th><th>Rate</th><th>Last</th></tr>'+rows.map(([k,v])=>`<tr><td>${escH(k)}</td><td>${v.n}</td><td>${v.att}</td><td>${v.ns}</td><td>${(v.att+v.ns)>0?Math.round(v.ns/(v.att+v.ns)*100)+'%':'—'}</td><td>${escH(v.last||'—')}</td></tr>`).join('')+'</table>'):'<p class="small">No appointments yet.</p>';
+ // appointments list
+ const sorted=as.slice().sort((a,b)=>String((a.date||'')+(a.time||'')).localeCompare(String((b.date||'')+(b.time||''))));
+ $('appt-list').innerHTML=sorted.length?('<table><tr><th>When</th><th>Client</th><th>Service</th><th>Status</th><th>Next step</th><th>Last message</th><th></th></tr>'+sorted.map(a=>{const i=as.indexOf(a);const nx=nextStep(a);const last=(a.log||[]).slice(-1)[0];return `<tr><td>${escH(a.date||'—')} ${escH(a.time||'')}</td><td>${escH(a.client)}</td><td>${escH(a.service)}</td><td><span class="badge ${a.status}">${a.status==='noshow'?'no-show':a.status}</span></td><td>${escH(nx.text)}</td><td>${last?escH(last.date+' · '+(STEPNAME[a.lang||'en'][last.step]||last.step)+' ('+(a.log||[]).length+')'):'Not sent yet'}</td><td><button class="btn small" data-act="att" data-i="${i}">Attended</button> <button class="btn small" data-act="ns" data-i="${i}">No-show</button> <button class="btn small" data-act="can" data-i="${i}">Cancelled</button> <button class="btn small" data-act="res" data-i="${i}">Reschedule</button> <button class="btn small" data-act="ics" data-i="${i}">.ics</button> <button class="btn small danger" data-act="del" data-i="${i}">Delete</button></td></tr>`}).join('')+'</table>'):'<p class="small">No appointments yet.</p>';
+ $('cmp-appt').innerHTML=sorted.map(a=>{const i=as.indexOf(a);return `<option value="${i}">${escH((a.date||'')+' '+(a.time||'')+' — '+(a.client||'')+' — '+(a.service||''))}</option>`}).join('');
+ document.querySelectorAll('#appt-list button').forEach(b=>b.addEventListener('click',()=>apptAction(b.dataset.act,+b.dataset.i)));
+}
+function apptAction(act,i){const as=appts();const a=as[i];if(!a)return;
+ if(act==='att'){a.status='attended'} if(act==='ns'){a.status='noshow'} if(act==='can'){a.status='cancelled'}
+ if(act==='res'){const d=prompt('New date (YYYY-MM-DD)',a.date||'');if(!d)return;const t=prompt('New time (HH:MM)',a.time||'10:00');if(!t)return;a.date=d;a.time=t;a.status='booked'}
+ if(act==='ics'){downloadICS(a);return}
+ if(act==='del'){if(!confirm('Delete this appointment?'))return;as.splice(i,1)}
+ saveAppts(as)}
+function downloadICS(a){const blob=new Blob([buildICS(a)],{type:'text/calendar'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='appointment-'+(a.date||'appt')+'.ics';l.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+function logStep(a,step){const today=new Date().toISOString().slice(0,10);a.log=a.log||[];if(!a.log.some(x=>x.step===step&&x.date===today))a.log.push({step,date:today})}
+function currentAppt(){const as=appts();const a=as[+$('cmp-appt').value];return{a,as}}
+function compose(){const {a,as}=currentAppt();if(!a){$('preview').textContent='—';return}const step=$('cmp-step').value;$('preview').textContent=composeText(a,step);logStep(a,step);saveAppts(as)}
+$('btn-compose').addEventListener('click',compose);
+$('cmp-appt').addEventListener('change',()=>{const {a}=currentAppt();if(!a)return;$('cmp-step').value=(()=>{const k=nextStep(a).key;return STEPS.includes(k)?k:'confirm'})();$('preview').textContent='—'});
+$('btn-copy').addEventListener('click',()=>{const t=$('preview').textContent;if(t&&t!=='—')navigator.clipboard&&navigator.clipboard.writeText(t)});
+$('btn-mail').addEventListener('click',()=>{const {a}=currentAppt();const t=$('preview').textContent;if(!a||t==='—')return;const parts=t.split('\n');const subj=(parts[0]||'').replace(/^(Subject:|Objet :|Asunto:)\s*/,'');window.location.href='mailto:'+encodeURIComponent(a.email||'')+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(parts.slice(1).join('\n').replace(/^\n+/,''))});
+$('btn-wa').addEventListener('click',()=>{const {a}=currentAppt();const t=$('preview').textContent;if(!a||t==='—')return;const num=(a.phone||'').replace(/[^0-9]/g,'');window.open('https://wa.me/'+num+'?text='+encodeURIComponent(t),'_blank')});
+$('btn-ics').addEventListener('click',()=>{const {a}=currentAppt();if(a)downloadICS(a)});
+$('btn-save-client').addEventListener('click',()=>{const name=$('client-name').value.trim();if(!name)return alert('Client name first');const cs=clients();cs.push({id:uid(),name,email:$('client-email').value.trim(),phone:$('client-phone').value.trim(),lang:$('client-lang').value});store.set('clients',cs);render()});
+$('client-saved').addEventListener('change',()=>{const c=clients()[+$('client-saved').value];if(!c)return;$('client-name').value=c.name;$('client-email').value=c.email||'';$('client-phone').value=c.phone||'';$('client-lang').value=c.lang||'en';$('appt-lang').value=c.lang||'en'});
+$('service-saved').addEventListener('change',()=>{const s=services()[+$('service-saved').value];if(!s)return;$('appt-service').value=s.name;$('appt-dur').value=s.dur||60});
+$('btn-save-service').addEventListener('click',()=>{const name=$('appt-service').value.trim();if(!name)return alert('Service name first');const sv=services();if(!sv.some(x=>x.name===name))sv.push({id:uid(),name,dur:+$('appt-dur').value||60});store.set('services',sv);render()});
+$('btn-save-appt').addEventListener('click',()=>{const client=$('client-name').value.trim();const service=$('appt-service').value.trim();if(!client||!service||!$('appt-date').value)return alert('Client, service and date first');const as=appts();as.push({id:uid(),client,email:$('client-email').value.trim(),phone:$('client-phone').value.trim(),service,dur:+$('appt-dur').value||60,date:$('appt-date').value,time:$('appt-time').value||'10:00',place:$('appt-place').value.trim(),lang:$('appt-lang').value,status:'booked',log:[]});saveAppts(as)});
+['biz-name','biz-place','biz-contact','biz-policy'].forEach(id=>{$(id).value=store.get(id,'');$(id).addEventListener('input',()=>store.set(id,$(id).value))});
+$('btn-export').addEventListener('click',()=>{const data={};['biz-name','biz-place','biz-contact','biz-policy','clients','services','appts'].forEach(k=>data[k]=store.get(k,k.startsWith('biz')?'':[]));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='appointment-reminders-backup.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),2000)});
+$('file-import').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const d=JSON.parse(t);Object.entries(d).forEach(([k,v])=>store.set(k,v));['biz-name','biz-place','biz-contact','biz-policy'].forEach(id=>$(id).value=store.get(id,''));render()}catch(err){alert('Import failed')}})});
+document.querySelectorAll('.langbar button').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.lang;document.querySelectorAll('.langbar button').forEach(x=>x.classList.toggle('active',x===b));const u=UI[lang];$('t-title').textContent=u.title;$('t-dash').textContent=u.dash;$('t-up').textContent=u.up;$('t-today').textContent=u.today;$('t-att').textContent=u.att;$('t-ns').textContent=u.ns;$('t-biz').textContent=u.biz;$('t-client').textContent=u.client;$('t-appt').textContent=u.appt;$('t-appts').textContent=u.appts;$('t-compose').textContent=u.compose;$('t-preview').textContent=u.preview;$('t-clients').textContent=u.clients;render()}));
+render();
+</script>
+</body>
+</html>
